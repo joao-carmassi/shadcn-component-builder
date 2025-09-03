@@ -11,8 +11,8 @@ import { useFileUpload } from '@/hooks/use-file-upload';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const maxSize = 100 * 1024 * 1024 * 1024;
-  const maxFiles = 100;
+  const maxSize = 100 * 1024 * 1024 * 100000000;
+  const maxFiles = 1000000000;
   const [form, setForm] = useState({
     name: '',
     directory: 'src/components/ui',
@@ -89,7 +89,7 @@ export default function Home() {
     <main className='bg-background'>
       <section className='p-6 md:p-12 max-w-7xl mx-auto space-y-3 md:space-y-6'>
         <div className='flex flex-col items-center justify-center'>
-          <H1>JSON Generator for ChatCN</H1>
+          <H1>JSON Generator for ChadCN</H1>
         </div>
         <div className='grid gap-3 grid-cols-2 lg:grid-cols-3'>
           <div className='grid w-full items-center gap-3'>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -110,13 +111,13 @@ export default function FileInput({
           <p className='text-muted-foreground mb-2 text-xs'>
             Drag & drop or click to browse
           </p>
-          <div className='text-muted-foreground/70 flex flex-wrap justify-center gap-1 text-xs'>
+          {/* <div className='text-muted-foreground/70 flex flex-wrap justify-center gap-1 text-xs'>
             <span>All files</span>
             <span>∙</span>
             <span>Max {maxFiles} files</span>
             <span>∙</span>
             <span>Up to {formatBytes(maxSize)}</span>
-          </div>
+          </div> */}
         </div>
       </div>
 

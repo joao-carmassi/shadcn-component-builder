@@ -1,7 +1,7 @@
 # 🚀 shadcn-component-builder
 
 ## About
-Generates a JSON that can be hosted and used in ChatCN to import components directly into your repository.
+Generates a JSON that can be hosted and used in ChadCN to import components directly into your repository.
 
 ---
 
@@ -10,7 +10,7 @@ Generates a JSON that can be hosted and used in ChatCN to import components dire
 - Input for **installation directory**.  
 - Input for **required dependencies**.  
 - **Upload React components** (.js, .ts, .jsx, .tsx).  
-- Generate a **formatted JSON** ready for use in ChatCN.  
+- Generate a **formatted JSON** ready for use in ChadCN.  
 - Option to **copy** the formatted JSON.  
 
 ---
