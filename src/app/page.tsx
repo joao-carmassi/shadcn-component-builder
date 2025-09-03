@@ -86,7 +86,7 @@ export default function Home() {
   }, [fileContents, form]);
 
   return (
-    <main className='bg-background'>
+    <main className='bg-background min-h-svh'>
       <section className='p-6 md:p-12 max-w-7xl mx-auto space-y-3 md:space-y-6'>
         <div className='flex flex-col items-center justify-center'>
           <H1>JSON Generator for ChadCN</H1>
