@@ -17,6 +17,7 @@ export default function Home() {
     name: '',
     directory: 'src/components/ui',
     dependencies: [] as string[],
+    registryDependencies: [] as string[],
   });
   const [format, setFormat] = useState<any>(null);
 
@@ -76,7 +77,7 @@ export default function Home() {
       name: form.name,
       type: 'registry:style',
       dependencies: [...form.dependencies],
-      registryDependencies: [],
+      registryDependencies: [...form.registryDependencies],
       files: fileContents.map((item) => ({
         ...item,
         path: `${form.directory}/${item.path}`,
@@ -114,7 +115,7 @@ export default function Home() {
               }
             />
           </div>
-          <div className='grid w-full items-center gap-3 col-span-2 lg:col-span-1'>
+          <div className='grid w-full items-center gap-3'>
             <Label htmlFor='dependencies'>Dependencies</Label>
             <TagsInput
               id='dependencies'
@@ -122,6 +123,17 @@ export default function Home() {
               value={form.dependencies}
               onValueChange={(val) =>
                 setForm((prev) => ({ ...prev, dependencies: val }))
+              }
+            />
+          </div>
+          <div className='grid w-full items-center gap-3 lg:col-span-3'>
+            <Label htmlFor='dependencies'>Registry Dependencies</Label>
+            <TagsInput
+              id='registryDependencies'
+              placeholder='Registry Dependencies'
+              value={form.registryDependencies}
+              onValueChange={(val) =>
+                setForm((prev) => ({ ...prev, registryDependencies: val }))
               }
             />
           </div>
