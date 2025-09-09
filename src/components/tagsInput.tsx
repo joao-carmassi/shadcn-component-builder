@@ -12,13 +12,13 @@ import React from 'react';
 /**
  * used for identifying the split char and use will pasting
  */
-const SPLITTER_REGEX = /[\n#?=&\t,./-]+/;
+const SPLITTER_REGEX = /[\n\t,\s]+/;
 
 /**
  * used for formatting the pasted element for the correct value format to be added
  */
 
-const FORMATTING_REGEX = /^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g;
+const FORMATTING_REGEX = /^\s+|\s+$/g;
 
 interface TagsInputProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string[];
