@@ -10,18 +10,26 @@ import { Label } from '@/components/ui/label';
 import { useFileUpload } from '@/hooks/use-file-upload';
 import { useEffect, useState } from 'react';
 
+interface FileContentItem {
+  originalName: string;
+  type: string;
+  target: string;
+  append: boolean;
+  content: string;
+}
+
 export default function Home() {
   const maxSize = 100 * 1024 * 1024 * 100000000;
   const maxFiles = 1000000000;
   const [form, setForm] = useState({
     name: '',
-    directory: 'src/components/ui',
     dependencies: [] as string[],
     registryDependencies: [] as string[],
   });
+
   const [format, setFormat] = useState<any>(null);
 
-  const [fileContents, setFileContents] = useState<any[]>([]);
+  const [fileContents, setFileContents] = useState<FileContentItem[]>([]);
 
   const [
     { files, isDragging, errors },
@@ -39,12 +47,24 @@ export default function Home() {
     multiple: true,
     maxFiles,
     maxSize,
-    accept: '.tsx,.jsx,.ts,.js',
+    accept: '.tsx,.jsx,.ts,.js,.css',
   });
+
+  const updateFileContent = (
+    originalName: string,
+    field: keyof Omit<FileContentItem, 'originalName' | 'content'>,
+    value: string | boolean,
+  ) => {
+    setFileContents((prev) =>
+      prev.map((f) =>
+        f.originalName === originalName ? { ...f, [field]: value } : f,
+      ),
+    );
+  };
 
   useEffect(() => {
     setFileContents((prev) =>
-      prev.filter((f) => files.some((fw) => fw.file.name === f.path))
+      prev.filter((f) => files.some((fw) => fw.file.name === f.originalName)),
     );
 
     files.forEach((fileWrapper) => {
@@ -52,16 +72,19 @@ export default function Home() {
         const reader = new FileReader();
         reader.onload = () => {
           setFileContents((prev) => {
-            const filtered = prev.filter(
-              (f) => f.path !== fileWrapper.file.name
+            const existing = prev.find(
+              (f) => f.originalName === fileWrapper.file.name,
             );
+            const filename = fileWrapper.file.name;
+            const filtered = prev.filter((f) => f.originalName !== filename);
             return [
               ...filtered,
               {
-                type: 'registry:file',
-                path: fileWrapper.file.name,
-                target: '',
-                content: reader.result,
+                originalName: filename,
+                type: existing?.type ?? 'registry:file',
+                target: existing?.target ?? `src/components/ui/${filename}`,
+                append: existing?.append ?? false,
+                content: reader.result as string,
               },
             ];
           });
@@ -78,10 +101,10 @@ export default function Home() {
       type: 'registry:style',
       dependencies: [...form.dependencies],
       registryDependencies: [...form.registryDependencies],
-      files: fileContents.map((item) => ({
+      files: fileContents.map(({ originalName: content, append, ...item }) => ({
         ...item,
-        path: `${form.directory}/${item.path}`,
-        target: `${form.directory}/${item.path}`,
+        content,
+        ...(append ? { append } : {}),
       })),
     });
   }, [fileContents, form]);
@@ -105,17 +128,6 @@ export default function Home() {
             />
           </div>
           <div className='grid w-full items-center gap-3'>
-            <Label htmlFor='directory'>Directory</Label>
-            <Input
-              id='directory'
-              placeholder='Directory'
-              value={form.directory}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, directory: e.target.value }))
-              }
-            />
-          </div>
-          <div className='grid w-full items-center gap-3'>
             <Label htmlFor='dependencies'>Dependencies</Label>
             <TagsInput
               id='dependencies'
@@ -126,7 +138,7 @@ export default function Home() {
               }
             />
           </div>
-          <div className='grid w-full items-center gap-3 lg:col-span-3'>
+          <div className='grid w-full items-center gap-3 col-span-2 lg:col-span-1'>
             <Label htmlFor='dependencies'>Registry Dependencies</Label>
             <TagsInput
               id='registryDependencies'
@@ -153,7 +165,80 @@ export default function Home() {
           maxFiles={maxFiles}
           maxSize={maxSize}
         />
-        {form.name && form.directory && files.length > 0 && (
+        {fileContents.length > 0 && (
+          <div className='space-y-3'>
+            <h2 className='text-sm font-semibold'>File metadata</h2>
+            <div className='grid gap-3'>
+              {fileContents.map((fc) => (
+                <div
+                  key={fc.originalName}
+                  className='bg-card border rounded-lg p-4 space-y-3'
+                >
+                  <p className='text-sm font-medium truncate'>
+                    {fc.originalName}
+                  </p>
+                  <div className='flex items-center justify-between gap-3'>
+                    <div className='grid gap-1.5 w-full'>
+                      <Label className='text-xs'>Type</Label>
+                      <Input
+                        className='h-8 text-xs max-w-full w-full'
+                        value={fc.type}
+                        onChange={(e) =>
+                          updateFileContent(
+                            fc.originalName,
+                            'type',
+                            e.target.value,
+                          )
+                        }
+                        placeholder='registry:file'
+                      />
+                    </div>
+                    <div className='grid gap-1.5 w-full'>
+                      <Label className='text-xs'>Target</Label>
+                      <Input
+                        className='h-8 text-xs max-w-full w-full'
+                        value={fc.target}
+                        onChange={(e) =>
+                          updateFileContent(
+                            fc.originalName,
+                            'target',
+                            e.target.value,
+                          )
+                        }
+                        placeholder='src/app/globals.css'
+                      />
+                    </div>
+                    <div className='grid gap-1.5'>
+                      <Label className='text-xs'>Append</Label>
+                      <div className='flex items-center h-8'>
+                        <input
+                          type='checkbox'
+                          id={`append-${fc.originalName}`}
+                          checked={fc.append}
+                          onChange={(e) =>
+                            updateFileContent(
+                              fc.originalName,
+                              'append',
+                              e.target.checked,
+                            )
+                          }
+                          className='h-4 w-4 rounded border-border accent-primary cursor-pointer'
+                        />
+                        <label
+                          htmlFor={`append-${fc.originalName}`}
+                          className='ml-2 text-xs cursor-pointer select-none text-nowrap font-medium'
+                        >
+                          Append to target
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {form.name && files.length > 0 && (
           <div>
             <div className='flex gap-3 justify-end mb-3'>
               <Button
@@ -173,7 +258,7 @@ export default function Home() {
                 Copy json
               </Button>
             </div>
-            <pre className='bg-muted p-4 rounded-lg whitespace-pre-wrap'>
+            <pre className='bg-muted p-4 rounded-lg whitespace-pre-wrap shadow inset-shadow-2xs'>
               {JSON.stringify(format, null, 2)}
             </pre>
           </div>
