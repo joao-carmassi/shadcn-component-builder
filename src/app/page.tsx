@@ -243,22 +243,26 @@ export default function Home() {
             <div className='flex gap-3 justify-end mb-3'>
               <Button
                 className='flex-1 lg:flex-none'
-                onClick={() =>
-                  navigator.clipboard.writeText(JSON.stringify(format))
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(format));
+                  alert('Minified JSON copied to clipboard!');
+                }}
               >
                 Copy minified json
               </Button>
               <Button
                 className='flex-1 lg:flex-none'
-                onClick={() =>
-                  navigator.clipboard.writeText(JSON.stringify(format, null, 2))
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    JSON.stringify(format, null, 2),
+                  );
+                  alert('JSON copied to clipboard!');
+                }}
               >
                 Copy json
               </Button>
             </div>
-            <pre className='bg-muted p-4 rounded-lg whitespace-pre-wrap shadow inset-shadow-2xs'>
+            <pre className='bg-muted p-4 rounded-lg shadow inset-shadow-2xs text-wrap break-words'>
               {JSON.stringify(format, null, 2)}
             </pre>
           </div>
