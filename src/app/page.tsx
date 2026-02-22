@@ -76,13 +76,20 @@ export default function Home() {
               (f) => f.originalName === fileWrapper.file.name,
             );
             const filename = fileWrapper.file.name;
+            const ext = filename.split('.').pop();
+            const defaultPath =
+              ext === 'css'
+                ? `src/app/${filename}`
+                : ext === 'ts' || ext === 'js'
+                  ? `src/lib/${filename}`
+                  : `src/components/ui/${filename}`;
             const filtered = prev.filter((f) => f.originalName !== filename);
             return [
               ...filtered,
               {
                 originalName: filename,
                 type: existing?.type ?? 'registry:file',
-                path: existing?.path ?? `src/components/ui/${filename}`,
+                path: existing?.path ?? defaultPath,
                 append: existing?.append ?? false,
                 content: reader.result as string,
               },
@@ -104,6 +111,7 @@ export default function Home() {
       files: fileContents.map(
         ({ originalName: _orig, content, append, ...item }) => ({
           ...item,
+          target: item.path,
           content,
           ...(append ? { append } : {}),
         }),
