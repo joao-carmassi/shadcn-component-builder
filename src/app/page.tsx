@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 interface FileContentItem {
   originalName: string;
   type: string;
-  path: string;
+  target: string;
   append: boolean;
   content: string;
 }
@@ -77,7 +77,7 @@ export default function Home() {
             );
             const filename = fileWrapper.file.name;
             const ext = filename.split('.').pop();
-            const defaultPath =
+            const defaultTarget =
               ext === 'css'
                 ? `src/app/${filename}`
                 : ext === 'ts' || ext === 'js'
@@ -89,7 +89,7 @@ export default function Home() {
               {
                 originalName: filename,
                 type: existing?.type ?? 'registry:file',
-                path: existing?.path ?? defaultPath,
+                target: existing?.target ?? defaultTarget,
                 append: existing?.append ?? false,
                 content: reader.result as string,
               },
@@ -108,14 +108,12 @@ export default function Home() {
       type: 'registry:style',
       dependencies: [...form.dependencies],
       registryDependencies: [...form.registryDependencies],
-      files: fileContents.map(
-        ({ originalName: _orig, content, append, ...item }) => ({
-          ...item,
-          target: item.path,
-          content,
-          ...(append ? { append } : {}),
-        }),
-      ),
+      files: fileContents.map(({ originalName, content, append, ...item }) => ({
+        ...item,
+        path: `shadcn-component/${originalName}`,
+        content,
+        ...(append ? { append } : {}),
+      })),
     });
   }, [fileContents, form]);
 
@@ -204,14 +202,14 @@ export default function Home() {
                       />
                     </div>
                     <div className='grid gap-1.5 w-full'>
-                      <Label className='text-xs'>Path</Label>
+                      <Label className='text-xs'>Target</Label>
                       <Input
                         className='h-8 text-xs max-w-full w-full'
-                        value={fc.path}
+                        value={fc.target}
                         onChange={(e) =>
                           updateFileContent(
                             fc.originalName,
-                            'path',
+                            'target',
                             e.target.value,
                           )
                         }
