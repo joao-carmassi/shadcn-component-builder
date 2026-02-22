@@ -101,11 +101,13 @@ export default function Home() {
       type: 'registry:style',
       dependencies: [...form.dependencies],
       registryDependencies: [...form.registryDependencies],
-      files: fileContents.map(({ originalName: content, append, ...item }) => ({
-        ...item,
-        content,
-        ...(append ? { append } : {}),
-      })),
+      files: fileContents.map(
+        ({ originalName: _orig, content, append, ...item }) => ({
+          ...item,
+          content,
+          ...(append ? { append } : {}),
+        }),
+      ),
     });
   }, [fileContents, form]);
 
