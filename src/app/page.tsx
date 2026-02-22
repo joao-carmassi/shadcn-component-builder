@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 interface FileContentItem {
   originalName: string;
   type: string;
-  target: string;
+  path: string;
   append: boolean;
   content: string;
 }
@@ -82,7 +82,7 @@ export default function Home() {
               {
                 originalName: filename,
                 type: existing?.type ?? 'registry:file',
-                target: existing?.target ?? `src/components/ui/${filename}`,
+                path: existing?.path ?? `src/components/ui/${filename}`,
                 append: existing?.append ?? false,
                 content: reader.result as string,
               },
@@ -196,18 +196,18 @@ export default function Home() {
                       />
                     </div>
                     <div className='grid gap-1.5 w-full'>
-                      <Label className='text-xs'>Target</Label>
+                      <Label className='text-xs'>Path</Label>
                       <Input
                         className='h-8 text-xs max-w-full w-full'
-                        value={fc.target}
+                        value={fc.path}
                         onChange={(e) =>
                           updateFileContent(
                             fc.originalName,
-                            'target',
+                            'path',
                             e.target.value,
                           )
                         }
-                        placeholder='src/app/globals.css'
+                        placeholder='src/components/ui/button.tsx'
                       />
                     </div>
                     <div className='grid gap-1.5'>
